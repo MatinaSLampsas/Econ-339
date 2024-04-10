@@ -1,0 +1,96 @@
+---
+title: "ECON 339 - Tuesday Week 2"
+date: "April 9 , 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+library(tidyverse)
+library(readxl)
+options(scipen = 999)
+```
+
+# Read in the data
+```{r}
+#read in the data for the college 
+college_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "College", 
+                     range = "A1:G117",
+                      n_max = 118
+                      )
+```
+
+You can also use the import data feature. But to keep in tidy format use the read_xlsx function
+
+# Find the mean in Base R:
+```{r}
+# find the mean of the cost
+mean(college_data$Cost)
+#find the mean of the grad
+mean(college_data$Grad)
+
+```
+
+
+# Find the mean but using DPLYR - a tidy format of the above: 
+```{r}
+# Better way to do the above:
+# Mean of Cost and grad
+college_data %>%
+  summarise(mean_cost = mean(Cost, na.rm = T),
+            mean_grad = mean(Grad, na.rm = T))
+```
+
+# Make the city variable 
+Assign a 1 to schools that are a city, and a 0 to cities that are non city. 
+```{r}
+#make the city variable: 
+college_data <- college_data %>% 
+  mutate(City = if_else(Location == "City", 1, 0))
+
+college_data
+```
+
+# Run a Regression: 
+we are goinng to run the same regression as we did in excel: 
+```{r}
+library(broom)
+# run a regression model 
+lm_model <- lm(Earnings ~ Cost+Grad+Debt+City, data = college_data)
+summary(lm_model)
+coefs <- broom::tidy(lm_model)
+coefs
+
+```
+The function for the linear model is : Function is y= (`r as.numeric(coefs[1,2])`) +(`r as.numeric(coefs[2,2])`)x1 + (`r as.numeric(coefs[3,2])`)x2+ (`r as.numeric(coefs[4,2])`)x3 + (`r as.numeric(coefs[5,2])`)x4
+
+# Use Predict to estimate what the value of earnings
+Given the Cost of a school to be $25,000, the Graduation rate of 60%, Debt of 80%, and the school being in a city. Calculate the estimated earnings of the student after graduation. Use the lm created to estimate this. 
+```{r}
+# predict 
+predict(lm_model, data.frame(Cost = 25000, Grad = 60, Debt = 80, City = 1))
+```
+
+
+# Fitted vs Residuals plot: 
+
+```{r}
+lm_model %>%
+  ggplot(aes(x = .fitted, y = .resid )) +
+  geom_point()+
+  geom_smooth(method = "lm")
+```
+
