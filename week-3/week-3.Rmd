@@ -1,0 +1,35 @@
+---
+title: "ECON 339 - Tuesday Week 3"
+date: "April 16 , 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+library(tidyverse)
+library(readxl)
+options(scipen = 999)
+```
+
+# Read in the data
+```{r}
+#read in the data for the college 
+college_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "College", 
+                     range = "A1:G117",
+                      n_max = 118
+                      )
+```
+
