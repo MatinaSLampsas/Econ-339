@@ -16,20 +16,51 @@ execute:
   warning: false
 ---
 
+# Setup
 ```{r setup}
 library(tidyverse)
 library(readxl)
 options(scipen = 999)
+
 ```
 
 # Read in the data
 ```{r}
 #read in the data for the college 
-college_data <- read_xlsx(here::here("data",
+retail_data <- read_xlsx(here::here("data",
                      "Data for Weeks 2-7.xlsx"), 
-                      sheet = "College", 
-                     range = "A1:G117",
-                      n_max = 118
+                      sheet = "Retail", 
+                     range = "A1:D41",
+                      n_max = 44
                       )
 ```
 
+# Create the Dummy Variables: 
+```{r}
+#make 3 dummy variables: 
+retail_data <- retail_data %>% 
+  mutate(d1 = if_else(Quarter == 1, 1,0),
+         d2 = if_else(Quarter == 2, 1,0),
+         d3 = if_else(Quarter == 3, 1,0))
+
+```
+
+# Make the regression Model
+```{r}
+retail_lm <- lm(Sales~GNP+d1+d2+d3, data = retail_data)
+predict(retail_lm, data.frame(GNP = 18000, d1 = 0, d2= 1, d3 = 0))
+coefs <- broom::tidy(retail_lm)
+summary(retail_lm)
+```
+## Interpretation of Slope of d4 :
+for every 1 unit increase of GNP, the sales will increase by (`r as.numeric(coefs[2,2])`) billion in Q4
+
+
+# Predict 
+## What are the predicted sales in quarter 2 if GNP is $18,000 (in billions)?
+```{r}
+predict(retail_lm, data.frame(GNP = 18000, d1 = 0, d2= 1, d3 = 0))
+```
+
+## Does using a different quarter for reference impact the inference?
+Yes, because the reason d1,d2,d3 are negative is because we use d4 as a reference and the sales are higher in d4 than in other quarters. If we change the reference variable than yes it will impact the inference since the slopes of the dummy variables will change. 
