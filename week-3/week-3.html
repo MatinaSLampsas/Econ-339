@@ -3089,6 +3089,11 @@ vertical-align: -.125em;
   <li><a href="#what-are-the-predicted-sales-in-quarter-2-if-gnp-is-18000-in-billions" id="toc-what-are-the-predicted-sales-in-quarter-2-if-gnp-is-18000-in-billions" class="nav-link" data-scroll-target="#what-are-the-predicted-sales-in-quarter-2-if-gnp-is-18000-in-billions">What are the predicted sales in quarter 2 if GNP is $18,000 (in billions)?</a></li>
   <li><a href="#does-using-a-different-quarter-for-reference-impact-the-inference" id="toc-does-using-a-different-quarter-for-reference-impact-the-inference" class="nav-link" data-scroll-target="#does-using-a-different-quarter-for-reference-impact-the-inference">Does using a different quarter for reference impact the inference?</a></li>
   </ul></li>
+  <li><a href="#homework---probelm" id="toc-homework---probelm" class="nav-link" data-scroll-target="#homework---probelm">Homework - probelm:</a>
+  <ul class="collapse">
+  <li><a href="#question-1" id="toc-question-1" class="nav-link" data-scroll-target="#question-1">Question 1:</a></li>
+  <li><a href="#question-23" id="toc-question-23" class="nav-link" data-scroll-target="#question-23">Question 2/3:</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -3228,6 +3233,145 @@ F-statistic: 128.7 on 4 and 35 DF,  p-value: &lt; 0.00000000000000022</code></pr
 <section id="does-using-a-different-quarter-for-reference-impact-the-inference" class="level2">
 <h2 class="anchored" data-anchor-id="does-using-a-different-quarter-for-reference-impact-the-inference">Does using a different quarter for reference impact the inference?</h2>
 <p>Yes, because the reason d1,d2,d3 are negative is because we use d4 as a reference and the sales are higher in d4 than in other quarters. If we change the reference variable than yes it will impact the inference since the slopes of the dummy variables will change.</p>
+</section>
+</section>
+<section id="homework---probelm" class="level1">
+<h1>Homework - probelm:</h1>
+<p>First subset the House_Price data by the college town of Ames (Iowa State University) or the college town of Lincoln (University of Nebraska). Also, only include Single Family houses. You should obtain 612 observations between these two towns, of which 209 are in Ames and 403 are in Lincoln. ## Read in the housing data</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>house_price_data <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Data for Weeks 2-7.xlsx&quot;</span>), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sheet =</span> <span class="st">&quot;House_Price&quot;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1:</h2>
+<p>Find the averages for the sale amount, number of bedrooms, number of bathrooms, square footage, and lot size in both campus towns.</p>
+<div class="cell">
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>avg_ames <span class="ot">&lt;-</span> house_price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Town <span class="sc">==</span> <span class="st">&quot;Ames, IA&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="at">.cols =</span> Sale_amount<span class="sc">:</span>Sqft_lot,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">mean</span>(.x)))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>avg_lincoln <span class="ot">&lt;-</span> house_price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Town <span class="sc">==</span> <span class="st">&quot;Lincoln, NE&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="at">.cols =</span> Sale_amount<span class="sc">:</span>Sqft_lot,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">mean</span>(.x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="question-23" class="level2">
+<h2 class="anchored" data-anchor-id="question-23">Question 2/3:</h2>
+<ol start="2" type="1">
+<li>Make the two linear models from the slides</li>
+<li>Which of the above models is better for making predictions?</li>
+</ol>
+<div class="cell">
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>house_price_data <span class="ot">&lt;-</span> house_price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Town <span class="sc">==</span> <span class="st">&quot;Lincoln, NE&quot;</span> <span class="sc">|</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        Town <span class="sc">==</span> <span class="st">&quot;Ames, IA&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ames =</span> <span class="fu">if_else</span>(Town <span class="sc">==</span> <span class="st">&quot;Ames, IA&quot;</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">newer =</span> <span class="fu">if_else</span>(Build_year<span class="sc">&gt;</span> <span class="dv">2000</span>, <span class="dv">1</span>,<span class="dv">0</span> ))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>lm_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sale_amount<span class="sc">~</span>Beds<span class="sc">+</span>Baths<span class="sc">+</span>Sqft_home<span class="sc">+</span>Sqft_lot<span class="sc">+</span>ames, <span class="at">data =</span> house_price_data)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>lm_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sale_amount<span class="sc">~</span>Beds<span class="sc">+</span>Baths<span class="sc">+</span>Sqft_home<span class="sc">+</span>Sqft_lot<span class="sc">+</span>ames<span class="sc">+</span>newer, <span class="at">data =</span> house_price_data)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">summary</span>(lm_1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  term          estimate  std.error statistic  p.value
+  &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept) -54973.    10030.         -5.48 6.20e- 8
+2 Beds         14566.     3714.          3.92 9.78e- 5
+3 Baths        44517.     3893.         11.4  1.42e-27
+4 Sqft_home       63.8       4.80       13.3  1.56e-35
+5 Sqft_lot         0.348     0.0850      4.09 4.88e- 5
+6 ames         20133.     5410.          3.72 2.16e- 4</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">summary</span>(lm_2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 5
+  term          estimate std.error statistic  p.value
+  &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept) -33157.    9705.         -3.42 6.77e- 4
+2 Beds          8144.    3554.          2.29 2.23e- 2
+3 Baths        35505.    3782.          9.39 1.20e-19
+4 Sqft_home       67.1      4.52       14.9  7.95e-43
+5 Sqft_lot         0.392    0.0799      4.91 1.18e- 6
+6 ames         24317.    5096.          4.77 2.29e- 6
+7 newer        58903.    6423.          9.17 7.14e-19</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Sale_amount ~ Beds + Baths + Sqft_home + Sqft_lot + 
+    ames, data = house_price_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-300267  -32832   -4038   22697  489517 
+
+Coefficients:
+                Estimate   Std. Error t value             Pr(&gt;|t|)    
+(Intercept) -54972.67090  10029.85061  -5.481          0.000000062 ***
+Beds         14566.37244   3714.07887   3.922          0.000097815 ***
+Baths        44517.12646   3892.68841  11.436 &lt; 0.0000000000000002 ***
+Sqft_home       63.75579      4.80090  13.280 &lt; 0.0000000000000002 ***
+Sqft_lot         0.34770      0.08499   4.091          0.000048756 ***
+ames         20133.05801   5409.93941   3.721             0.000216 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 62790 on 610 degrees of freedom
+Multiple R-squared:  0.6539,    Adjusted R-squared:  0.651 
+F-statistic: 230.5 on 5 and 610 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Sale_amount ~ Beds + Baths + Sqft_home + Sqft_lot + 
+    ames + newer, data = house_price_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-279127  -28481   -2695   23462  437689 
+
+Coefficients:
+                Estimate   Std. Error t value             Pr(&gt;|t|)    
+(Intercept) -33156.90193   9705.32481  -3.416             0.000677 ***
+Beds          8143.66442   3553.97098   2.291             0.022279 *  
+Baths        35504.72732   3781.75352   9.388 &lt; 0.0000000000000002 ***
+Sqft_home       67.13163      4.51888  14.856 &lt; 0.0000000000000002 ***
+Sqft_lot         0.39210      0.07988   4.908           0.00000118 ***
+ames         24316.92942   5095.69006   4.772           0.00000229 ***
+newer        58903.35857   6422.60201   9.171 &lt; 0.0000000000000002 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 58900 on 609 degrees of freedom
+Multiple R-squared:  0.6959,    Adjusted R-squared:  0.6929 
+F-statistic: 232.2 on 6 and 609 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+</div>
+</div>
+<p>Model 2 is better since it has a higher adjusted R^2.</p>
 <!-- -->
 
 </section>
@@ -3668,72 +3812,120 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;ECON 339 - Tuesday Week 3&quot;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;April 16 , 2024&quot;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Matina Lampsas&quot;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">   html:</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">     embed-resources: true</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">     code-tools: true</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">     toc: true</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">     code-fold: show</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> source</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">  error: true</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># Setup</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup}</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="in">library(readxl)</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="in">options(scipen = 999)</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="fu"># Read in the data</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">#read in the data for the college </span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>retail_data <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Data for Weeks 2-7.xlsx&quot;</span>), </span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sheet =</span> <span class="st">&quot;Retail&quot;</span>, </span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>                     <span class="at">range =</span> <span class="st">&quot;A1:D41&quot;</span>,</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>                      <span class="at">n_max =</span> <span class="dv">44</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>                      )</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="fu"># Create the Dummy Variables: </span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="co">#make 3 dummy variables: </span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>retail_data <span class="ot">&lt;-</span> retail_data <span class="sc">%&gt;%</span> </span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d1 =</span> <span class="fu">if_else</span>(Quarter <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">0</span>),</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>         <span class="at">d2 =</span> <span class="fu">if_else</span>(Quarter <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">1</span>,<span class="dv">0</span>),</span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>         <span class="at">d3 =</span> <span class="fu">if_else</span>(Quarter <span class="sc">==</span> <span class="dv">3</span>, <span class="dv">1</span>,<span class="dv">0</span>))</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="fu"># Make the regression Model</span></span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>retail_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sales<span class="sc">~</span>GNP<span class="sc">+</span>d1<span class="sc">+</span>d2<span class="sc">+</span>d3, <span class="at">data =</span> retail_data)</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(retail_lm, <span class="fu">data.frame</span>(<span class="at">GNP =</span> <span class="dv">18000</span>, <span class="at">d1 =</span> <span class="dv">0</span>, <span class="at">d2=</span> <span class="dv">1</span>, <span class="at">d3 =</span> <span class="dv">0</span>))</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(retail_lm)</span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(retail_lm)</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation of Slope of d4 :</span></span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>for every 1 unit increase of GNP, the sales will increase by (<span class="in">`r as.numeric(coefs[2,2])`</span>) billion in Q4</span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a><span class="fu"># Predict </span></span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="fu">## What are the predicted sales in quarter 2 if GNP is $18,000 (in billions)?</span></span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(retail_lm, <span class="fu">data.frame</span>(<span class="at">GNP =</span> <span class="dv">18000</span>, <span class="at">d1 =</span> <span class="dv">0</span>, <span class="at">d2=</span> <span class="dv">1</span>, <span class="at">d3 =</span> <span class="dv">0</span>))</span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## Does using a different quarter for reference impact the inference?</span></span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>Yes, because the reason d1,d2,d3 are negative is because we use d4 as a reference and the sales are higher in d4 than in other quarters. If we change the reference variable than yes it will impact the inference since the slopes of the dummy variables will change. </span>
+<div class="sourceCode" id="cb20" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;ECON 339 - Tuesday Week 3&quot;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;April 16 , 2024&quot;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Matina Lampsas&quot;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">   html:</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">     embed-resources: true</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">     code-tools: true</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">     toc: true</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">     code-fold: show</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> source</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">  error: true</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># Setup</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup}</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="in">library(readxl)</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="in">options(scipen = 999)</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="fu"># Read in the data</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="co">#read in the data for the college </span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>retail_data <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Data for Weeks 2-7.xlsx&quot;</span>), </span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sheet =</span> <span class="st">&quot;Retail&quot;</span>, </span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>                     <span class="at">range =</span> <span class="st">&quot;A1:D41&quot;</span>,</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>                      <span class="at">n_max =</span> <span class="dv">44</span></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>                      )</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a><span class="fu"># Create the Dummy Variables: </span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a><span class="co">#make 3 dummy variables: </span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>retail_data <span class="ot">&lt;-</span> retail_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d1 =</span> <span class="fu">if_else</span>(Quarter <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>         <span class="at">d2 =</span> <span class="fu">if_else</span>(Quarter <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>         <span class="at">d3 =</span> <span class="fu">if_else</span>(Quarter <span class="sc">==</span> <span class="dv">3</span>, <span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a><span class="fu"># Make the regression Model</span></span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>retail_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sales<span class="sc">~</span>GNP<span class="sc">+</span>d1<span class="sc">+</span>d2<span class="sc">+</span>d3, <span class="at">data =</span> retail_data)</span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(retail_lm, <span class="fu">data.frame</span>(<span class="at">GNP =</span> <span class="dv">18000</span>, <span class="at">d1 =</span> <span class="dv">0</span>, <span class="at">d2=</span> <span class="dv">1</span>, <span class="at">d3 =</span> <span class="dv">0</span>))</span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(retail_lm)</span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(retail_lm)</span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation of Slope of d4 :</span></span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a>for every 1 unit increase of GNP, the sales will increase by (<span class="in">`r as.numeric(coefs[2,2])`</span>) billion in Q4</span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a><span class="fu"># Predict </span></span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a><span class="fu">## What are the predicted sales in quarter 2 if GNP is $18,000 (in billions)?</span></span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(retail_lm, <span class="fu">data.frame</span>(<span class="at">GNP =</span> <span class="dv">18000</span>, <span class="at">d1 =</span> <span class="dv">0</span>, <span class="at">d2=</span> <span class="dv">1</span>, <span class="at">d3 =</span> <span class="dv">0</span>))</span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## Does using a different quarter for reference impact the inference?</span></span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>Yes, because the reason d1,d2,d3 are negative is because we use d4 as a reference and the sales are higher in d4 than in other quarters. If we change the reference variable than yes it will impact the inference since the slopes of the dummy variables will change. </span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a><span class="fu"># Homework - probelm: </span></span>
+<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a>First subset the House_Price data by the college town of Ames (Iowa State </span>
+<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a>University) or the college town of Lincoln (University of Nebraska). Also, only include Single </span>
+<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a>Family houses. You should obtain 612 observations between these two towns, of which 209 are </span>
+<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a>in Ames and 403 are in Lincoln.</span>
+<span id="cb20-81"><a href="#cb20-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read in the housing data</span></span>
+<span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a>house_price_data <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,</span>
+<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Data for Weeks 2-7.xlsx&quot;</span>), </span>
+<span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sheet =</span> <span class="st">&quot;House_Price&quot;</span></span>
+<span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a>                      )</span>
+<span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 1:</span></span>
+<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a> Find the averages for the sale amount, number of bedrooms, number of bathrooms, square </span>
+<span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a>footage, and lot size in both campus towns.</span>
+<span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a>avg_ames <span class="ot">&lt;-</span> house_price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Town <span class="sc">==</span> <span class="st">&quot;Ames, IA&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="at">.cols =</span> Sale_amount<span class="sc">:</span>Sqft_lot,</span>
+<span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">mean</span>(.x)))</span>
+<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a>avg_lincoln <span class="ot">&lt;-</span> house_price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Town <span class="sc">==</span> <span class="st">&quot;Lincoln, NE&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="at">.cols =</span> Sale_amount<span class="sc">:</span>Sqft_lot,</span>
+<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">mean</span>(.x)))</span>
+<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question 2/3: </span></span>
+<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Make the two linear models from the slides</span>
+<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Which of the above models is better for making predictions?</span>
+<span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a>house_price_data <span class="ot">&lt;-</span> house_price_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Town <span class="sc">==</span> <span class="st">&quot;Lincoln, NE&quot;</span> <span class="sc">|</span></span>
+<span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a>        Town <span class="sc">==</span> <span class="st">&quot;Ames, IA&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ames =</span> <span class="fu">if_else</span>(Town <span class="sc">==</span> <span class="st">&quot;Ames, IA&quot;</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a>         <span class="at">newer =</span> <span class="fu">if_else</span>(Build_year<span class="sc">&gt;</span> <span class="dv">2000</span>, <span class="dv">1</span>,<span class="dv">0</span> ))</span>
+<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a>lm_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sale_amount<span class="sc">~</span>Beds<span class="sc">+</span>Baths<span class="sc">+</span>Sqft_home<span class="sc">+</span>Sqft_lot<span class="sc">+</span>ames, <span class="at">data =</span> house_price_data)</span>
+<span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a>lm_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sale_amount<span class="sc">~</span>Beds<span class="sc">+</span>Baths<span class="sc">+</span>Sqft_home<span class="sc">+</span>Sqft_lot<span class="sc">+</span>ames<span class="sc">+</span>newer, <span class="at">data =</span> house_price_data)</span>
+<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">summary</span>(lm_1))</span>
+<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">summary</span>(lm_2))</span>
+<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_1)</span>
+<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_2)</span>
+<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a>Model 2 is better since it has a higher adjusted R^2. </span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
