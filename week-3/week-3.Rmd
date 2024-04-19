@@ -93,18 +93,19 @@ avg_lincoln <- house_price_data %>%
 
 avg_ames
 avg_lincoln
-
-# Working on another way to do this using map()
-# filtered_house_data %>% 
-#   select(Town, 
+# 
+#Working on another way to do this using map()
+# filtered_house_data %>%
+#   select(Town,
 #          Sale_amount,
 #          Beds,
 #          Baths,
 #          Sqft_home,
-#          Sqft_lot) %>% 
-#   map_df(.x , 
-#     .f = ~mean(.x)) %>% 
-#   group_by(Town)
+#          Sqft_lot) %>%
+#   group_by(Town) %>%
+#   summarise(map(.x ,
+#     .f = ~mean()))
+
 
 ```
 ## Question 2/3: 
@@ -134,3 +135,4 @@ summary(lm_2)
 ```
 
 Model 2 is better since it has a higher adjusted R^2. Since we have different numbers of dummy variables, we have to use adjusted R^2 in order to compare the models. 
+
