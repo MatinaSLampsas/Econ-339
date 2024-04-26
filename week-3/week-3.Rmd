@@ -30,8 +30,7 @@ options(scipen = 999)
 retail_data <- read_xlsx(here::here("data",
                      "Data for Weeks 2-7.xlsx"), 
                       sheet = "Retail", 
-                     range = "A1:D41",
-                      n_max = 44
+                     range = "A1:D41"
                       )
 ```
 
@@ -135,4 +134,124 @@ summary(lm_2)
 ```
 
 Model 2 is better since it has a higher adjusted R^2. Since we have different numbers of dummy variables, we have to use adjusted R^2 in order to compare the models. 
+
+# Predction & Confidence Interval: 
+```{r}
+college_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "College",
+                     range = "A1:K117"
+                      )
+```
+
+```{r}
+college_lm <- lm(Earnings~`Cost*`+`Grad*`+`Debt*`+`City*`, data = college_data)
+
+summary(college_lm)
+college_coefs <- broom::tidy(college_lm)
+college_coefs
+```
+
+```{r}
+confint.default(college_lm, level = 0.95)
+```
+
+```{r}
+
+# predict_int <- function(lm, data_set ,con_level){
+#   residuals <- resid(lm)
+#   residual_sd <- sd(residuals)
+#   df <- df.residual(lm)
+#   n_obs <- nobs(lm)
+#   confidence_level <- con_level
+#   t_value <- qt((1 + confidence_level) / 2, df)
+#   margin_of_error <- t_value * residual_sd * sqrt(1 + (1/n_obs) + ((new_observation - mean(data_set)) ^ 2) / sum((new_observation - mean(data_set)) ^ 2))
+#   lower_bound <- predict(lm, interval = "prediction")[1, "fit"] - margin_of_error
+#   upper_bound <- predict(lm, interval = "prediction")[1, "fit"] + margin_of_error
+# 
+# # Make the prediction interval into a vector
+#   prediction_interval <- c(lower_bound, upper_bound)
+# return(prediction_interval)
+
+# }
+
+```
+
+```{r}
+# prediction_interval <- function(lm_model, data, confidence_level = 0.95) {
+#   # Calculate residuals
+#   residuals <- resid(lm_model)
+#   
+#   # Calculate the standard deviation of residuals
+#   residual_sd <- sd(residuals)
+#   
+#   # Degrees of freedom
+#   df <- df.residual(lm_model)
+#   
+#   # Number of observations
+#   n_obs <- nrow(data)
+#   
+#   # Calculate the t-value for the desired confidence level
+#   t_value <- qt((1 + confidence_level) / 2, df)
+#   
+#   # Calculate the margin of error
+#   margin_of_error <- t_value * residual_sd * sqrt(1 + (1/df))
+#   
+#   # Calculate lower and upper bounds of the prediction interval
+#   lower_bound <- predict(lm_model, interval = "prediction")[, "fit"] - margin_of_error
+#   upper_bound <- predict(lm_model, interval = "prediction")[, "fit"] + margin_of_error
+#   
+#   # Return the prediction interval
+#   return(c(mean(lower_bound), mean(upper_bound)))
+# }
+# 
+# prediction_interval(college_lm, college_data, confidence_level = 0.95)
+
+```
+```{r}
+calculate_prediction_interval <- function(model, data, confidence_level = 0.95) {
+  
+  #y_hat: 
+  y_hat <- coef(model)[1]
+  # Calculate residuals
+  residuals <- resid(model)
+  
+  # Calculate the standard deviation of residuals
+  residual_sd <- sd(residuals)
+  
+  # Calculate degrees of freedom
+  df <- df.residual(model)
+  
+  # # Determine the number of predictors (excluding intercept)
+  # n_predictors <- length(coef(model)) - 1  
+  
+  # # Obtain the total number of observations
+  # n_obs <- nobs(model)
+  
+  # residual standard error:
+  resid_se <- summary(model)$sigma
+  
+  # Calculate the t-value corresponding to the desired confidence level and degrees of freedom
+  t_value <- qt((confidence_level) , df)
+  sqrt_sum_squares <- sqrt(resid_se^2)
+  
+  # Calculate the margin of error for prediction interval
+  margin_of_error <- t_value * sqrt((resid_se^2 + (coef(model)[2])^2))
+  
+  # Calculate lower and upper bounds of the prediction interval for the data
+  lower_bound <- predict(model, interval = "prediction")[, "fit"] - margin_of_error
+  upper_bound <- predict(model, interval = "prediction")[, "fit"] + margin_of_error
+  
+  # Combine the lower and upper bounds into a prediction interval
+  prediction_interval <- c(mean(lower_bound), mean(upper_bound))
+  
+  # Return the prediction interval
+  return(prediction_interval)
+}
+
+# Usage example
+calculate_prediction_interval(college_lm, college_data, confidence_level = 0.975)
+
+
+```
 
