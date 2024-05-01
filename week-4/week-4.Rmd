@@ -1,0 +1,60 @@
+---
+title: "ECON 339 - Tuesday Week 4"
+date: "April 23 , 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+# Setup
+```{r setup}
+library(tidyverse)
+library(readxl)
+options(scipen = 999)
+
+```
+
+# Read in the data
+```{r}
+#read in the data for the college 
+JJ_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "J&J"
+                     )
+```
+
+# Individual Test For Significance: 
+## First create a regression model: 
+### Q1 - a. At the 5% significance level, is the beta coefficient less than one? 
+
+```{r}
+jj_lm <- lm(`R-Rf`~`Rm-Rf`, data = JJ_data)
+# summary(jj_lm)
+coefs <- broom::tidy(jj_lm)
+coefs
+# pt(-1.796,58,lower.tail = TRUE)
+# pt(1.796,58,lower.tail=FALSE)
+df <- as.numeric(df.residual(jj_lm))
+t_58 <- as.numeric((coefs[2,2]-1)/coefs[2,3])
+
+pt(t_58, df, lower.tail = F)
+
+```
+Since the P-value is 0.038, it is less than .05 so we reject the null hypothesis that johnson and johnson is less risky than the market
+
+### Q2- At the 5% significance level, are there abnormal returns? In other words, is 
+the alpha coefficient significantly different from zero?
+No there are no Abnormal Returns since the p-value for the intercept is too high 
+
+
+

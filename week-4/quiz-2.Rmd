@@ -1,0 +1,74 @@
+---
+title: "ECON 339 - Quiz 2"
+date: "April 25 , 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+# Setup
+```{r setup}
+library(tidyverse)
+library(readxl)
+options(scipen = 999)
+
+```
+
+# Read in the data
+```{r}
+#read in the data for the college 
+q2_data <- read_xlsx(here::here("data",
+                     "DataQ2.xlsx")
+                     )
+```
+# Estimate a multiple linear regression model: 
+```{r}
+# q2_lm <- lm(Salary~Age+Female+Feedback+Diplomat+Explorer+Analyst, data = q2_data)
+# summary(q2_lm)
+q2_lm2 <- lm(Salary~Age+Female+Feedback, data = q2_data)
+summary(q2_lm2)
+```
+```{r}
+predict(q2_lm, data.frame(Age = 50, Female = 0,Feedback = 3, Diplomat=0,Analyst=1,Explorer=0))
+
+predict(q2_lm, data.frame(Age = 50, Female = 0,Feedback = 3, Diplomat=1,Analyst=0,Explorer=0))
+
+predict(q2_lm, data.frame(Age = 50, Female = 0,Feedback = 3, Diplomat=0,Analyst=0 ,Explorer=0))
+
+
+```
+```{r}
+q2_data <- q2_data %>% 
+  mutate(Sentinel = ifelse(Personality == "Sentinel", 1,0))
+```
+
+```{r}
+q2_lm2 <- lm(Salary~Age+Female+Feedback+Sentinel+Explorer+Analyst, data = q2_data)
+
+predict(q2_lm2, data.frame(Age = 50, Female = 0,Feedback = 3, Sentinel=1,Analyst=0,Explorer=0))
+
+```
+```{r}
+# 4.	Report 90% confidence and prediction intervals for the salary of a 50-year-old male sales representative with a feedback score of 3 and the personality type of an analyst.
+predict(q2_lm, data.frame(Age = 50, Female = 0,Feedback = 3, Diplomat=0,Analyst=1 ,Explorer=0), level=0.9, interval="confidence")
+
+predict(q2_lm, data.frame(Age = 50, Female = 0,Feedback = 3, Diplomat=0,Analyst=1 ,Explorer=0), level=0.9, interval="prediction")
+```
+```{r}
+b <- q2_lm$coefficients[3]
+se <- sqrt(diag(vcov(q2_lm)))[3]
+n <- nrow(q2_data); k=3
+t <- (b)/se; t
+pt(t, (n-k-1), lower.tail = T)
+```
+
