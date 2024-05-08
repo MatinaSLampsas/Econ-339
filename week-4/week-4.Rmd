@@ -56,5 +56,29 @@ Since the P-value is 0.038, it is less than .05 so we reject the null hypothesis
 the alpha coefficient significantly different from zero?
 No there are no Abnormal Returns since the p-value for the intercept is too high 
 
+# Practice Problem 
+ Reconsider the Retail data to estimate a linear regression model with Sales as the dependent 
+variable and GNP along with the relevant dummy variables, to capture seasonal variations, as 
+explanatory variables. At the 5% significance level, test if the sales are higher in the 2nd quarter 
+than the 3rd quarter. 
+```{r}
+retail_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "Retail", 
+                     range = "A1:G41"
+                     )
+```
 
+```{r}
+# make the linear regression 
+retail_lm <- lm(Sales~GNP+d1+d2+d4, data = retail_data)
+summary(retail_lm)
+```
+```{r}
+b <- retail_lm$coefficients[4]
+se <- sqrt(diag(vcov(retail_lm)))[4]
+n <- nrow(retail_data); k=3
+t <- (b)/se; t
+pt(t, (35), lower.tail = T)
+```
 
