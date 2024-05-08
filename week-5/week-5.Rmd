@@ -1,0 +1,161 @@
+---
+title: "ECON 339 - Tuesday Week 5"
+date: "April 30 , 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+# Setup
+```{r setup}
+library(tidyverse)
+library(readxl)
+options(scipen = 999)
+
+```
+
+# Read in the data
+```{r}
+#read in the data for the college 
+MIS_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "Salary_MIS"
+                     )
+```
+
+#Run linear regression model with and without the interaction variable
+```{r}
+# run a lm without the interaction varaible
+lm_1 <- lm(Salary~ GPA + MIS + Statistics, data = MIS_data)
+# run a lm with the interaction variable -- the interaction variable is MIS*Statistics
+lm_interact <- lm(Salary~ GPA + MIS + Statistics + MIS*Statistics, data = MIS_data)
+summary(lm_1) ; summary(lm_interact)
+```
+
+```{r}
+# Example of predicting a variable using the interaction regression w/ two dummy variables
+example <- predict(lm_interact, data.frame(GPA = 3, MIS = 1, Statistics = 1))
+example
+```
+# Interaction of Numerical and Dummy variables: 
+Here we have a dataset called Gender_Gap. It includes: 
+- Salary: the salary (in dollars) of the individual
+- Size: the size of the firm the project manager works at 
+- Experience: the years of experience the person has
+- Female: a dummy variable that assigns a value of 1 if the individual is a female and a 0 if they are not a female
+- Grad: assigns 1 to those who went to grad school, and 0 to those who did not
+## Import the Data
+```{r}
+#read in the data for the college 
+gender_gap <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "Gender_Gap"
+                     )
+```
+
+## Now run a linear regression w/ interaction variables: 
+```{r}
+gender_gap_lm <- lm(Salary ~ Size + Experience + Female + Grad + Female*Experience + Female*Grad, data = gender_gap)
+
+```
+Now that we read in the data and ran a linear model, we can see how experience interacts with gender to affect salary. Also we can see how gender interacts with graduate degree to influence salary
+
+## Visualize the results: 
+```{r}
+msize = as.numeric(mean(gender_gap$Size))
+exp <- 1:20
+female <- map(.x = 1:20, 
+              .f = ~predict(gender_gap_lm, data.frame(Size = msize, Experience = .x, Female = 1, Grad = 1)))
+male <- map(.x = 1:20, 
+              .f = ~predict(gender_gap_lm, data.frame(Size = msize, Experience = .x, Female = 0, Grad = 1)))
+
+```
+
+# Practice Problem
+## Import the Data
+```{r}
+#read in the data for the college 
+conversion <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "Conversion"
+                     )
+```
+
+## Part A: 
+Create a dummy variable labeled Training, that assigns a value of 1 for employees who 
+participate in training and 0 for those who do not. Estimate and interpret the effect of 
+Experience and Training on the lead conversion rate.
+```{r}
+# creating our dummy variable
+conversion <- conversion %>% 
+  mutate(Training = if_else(Participation == "Yes", 1, 0))
+  
+  # run the model with rate as the response and experience/training as the explanatory 
+ conversion_lm_1 <- lm(Rate ~ Experience + Training , data = conversion)
+ broom::tidy(conversion_lm_1)
+
+```
+Now that we read in the data and ran a linear model, we can see how experience interacts with gender to affect salary. Also we can see how gender interacts with graduate degree to influence salary
+
+## Part B:
+It is believed that training participation may be especially effective for managers with fewer 
+years of experience. Extend the above model by incorporating the appropriate interaction 
+variable.
+```{r}
+# Run the lm with the interaction variable included 
+ conversion_lm_2 <- lm(Rate ~ Experience + Training + Experience*Training, data = conversion)
+ broom::tidy(conversion_lm_2)
+```
+
+
+## Part C: 
+Find the preferred model and use the estimated model to predict the lead conversion rate 
+for an employee with 5 years of experience who has participated in training. What is the 
+corresponding rate with 20 years of experience
+
+### 5 & 20 year predictions: 
+```{r}
+five_yr_predict <- predict(conversion_lm_2, data.frame(Experience = 5, Training = 1))
+twnty_yr_predict <- predict(conversion_lm_2, data.frame(Experience = 20, Training = 1))
+five_yr_predict ; twnty_yr_predict
+```
+The prediction for an employee with 5 years of experience who has participated in the training is: `r (five_yr_predict)`
+
+The prediction for an employee with 20 years of experience who has participated in the training is: `r (twnty_yr_predict)`
+
+### Predict values: 
+Predict the values of Employees ranging from 1-20 years experience who have and have not completed the training. 
+After predicting the values, plot them to show a line representing the two scenarios. 
+```{r}
+# prediction values for those who are trained
+train_predict <- map_df(.x = 1:20,
+       .f = ~predict(conversion_lm_2, data.frame(Experience = .x, Training = 1)))
+# prediction values for those who aren't trained
+not_train_predict <- map_df(.x = 1:20,
+       .f = ~predict(conversion_lm_2, data.frame(Experience = .x, Training = 0)))
+# data frame with all of our data
+conversion_predict <- data.frame(Experience = 1:20, Predictions_1 = train_predict, Prediction_2 = not_train_predict)
+
+# Visualization - plot both lines on the same graph to visualize the predicted data
+conversion_predict %>% 
+  rename(prediction_trained = X1,
+         prediction_not_trained =X1.1 ) %>% 
+  ggplot(aes(x = Experience), color = prediction_trained)+
+  geom_smooth(aes(y = prediction_trained, color = "Trailed"), method = "lm")+
+  geom_smooth(aes(y = prediction_not_trained, color = "Not Trained"), method = "lm")+
+  labs(x = "Years of Experience", y = "Salary", colour = "Key", title = "Linear Regression of Prediction of Salary Based on Years of Experience")
+
+```
+
+
+

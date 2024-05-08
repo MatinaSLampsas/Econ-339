@@ -1,0 +1,158 @@
+---
+title: "ECON 339 - Tuesday Week 6"
+date: "May 7, 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+# Setup
+```{r setup}
+library(tidyverse)
+library(readxl)
+options(scipen = 999)
+
+```
+
+# Read in the Data 
+```{r}
+#read in the data for the wages 
+wages_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "Wages"
+                     )
+```
+
+# In Class Example:
+## Make a scatter plot: 
+Plot Wage against Age and evaluate whether a linear or quadratic regression 
+model better captures the relationship. Verify your choice by using the 
+appropriate goodness-of-fit measure.
+```{r}
+wages_data %>% 
+  ggplot(aes(x = Age, y = Wage))+
+  geom_jitter()+ 
+  geom_smooth()+ 
+  geom_smooth(method = "lm", color = "red")
+```
+* On the exam, he will ask us to do graphs
+
+Use the appropriate model to predict hourly wages for someone with 16 
+years of education and age equal to 30, 50, or 70
+## Conduct/predict using lm: 
+```{r}
+wages_data <- wages_data %>% 
+  mutate(age_sqrd = Age^2)
+wages_lm <- lm(Wage ~ Age + Educ ,data = wages_data)
+summary(wages_lm)
+wages_qm <- lm(Wage ~ Educ+ Age + I(Age^2), data = wages_data)
+summary(wages_qm)
+```
+Predict Vals: 
+```{r}
+predict(wages_qm, data.frame(Educ=16, Age=30))
+predict(wages_qm, data.frame(Educ=16, Age=50))
+predict(wages_qm, data.frame(Educ=16, Age=70))
+
+```
+NOTE TO SELF --> FIND A WAY TO DO THIS WITHOUT THE I() THING
+According to the model, at what age will someone with 16 years of 
+education attain the highest wages?
+
+```{r}
+coeffs <- coefficients(wages_qm)
+predict <- map2_df(.x = 20:80,
+                   .y= 16,
+                   .f = ~predict(wages_qm, data.frame(Educ = .y, Age = .x)))
+predict %>%
+  mutate(age = 20:80) %>%
+  rename(pred_wage = `1`) %>%
+  ggplot(aes(x = age, y = pred_wage)) +
+  geom_jitter() +
+  geom_smooth(color = "blue", aes(group = "Quadratic Model")) +  # Labeling the blue line as quadratic
+  geom_smooth(method = "lm", color = "red", aes(group = "Linear Model")) +  # Labeling the red line as linear
+  labs(title = "Predicted Quad/Linear graph", x = "Age", y = "Predicted Wage", color = "Model Key")
+```
+
+# Practice Question: 
+## Import the Data: 
+```{r}
+#read in the data for the tech sales 
+techsales_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "TechSales"
+                     )
+```
+
+## Subsest the data and make dummy variables: 
+First subset the TechSales data to include only hardware product. You should obtain 9860 
+observations. Use College and Personality variables to construct appropriate dummy 
+variables. 
+```{r}
+filtered_tchsales <- techsales_data %>% 
+  filter(Business == "Hardware") %>% 
+  mutate(d1 = if_else(Personality == "Diplomat",1,0),
+         d2 = if_else(Personality == "Explorer", 1,0),
+         d3 = if_else(Personality == "Analyst",1,0),
+         d4 = if_else(Personality == "Sentinel",1,0),
+         d5 = if_else(College =="Yes", 1,0))
+
+```
+Compare the linear model (Model 1) that uses Age, Female, College, Analyst, 
+Diplomat, Explorer, and Certificates as predictor variables. Model 2 extends Model 1 by 
+including age-sq as an additional predictor variable
+```{r}
+# make a model that isn't quadratic
+model_1 <- lm(NPS ~ Age + Female +Certificates + d1 + d2 + d3 + d5, data = filtered_tchsales)
+# make a quadratic model that considers Age ^2
+model_2 <- lm(NPS ~ Age + Female +Certificates+ d1 + d2 + d3 + d5 + I(Age^2), data = filtered_tchsales)
+# summarize and compare the models
+summary(model_1) ; summary(model_2)
+```
+
+• Use model selection criteria to find the appropriate model for the analysis. 
+• Interpret your results with reference to well-formatted figures and tables.
+
+The second model will be chosen since the R^2 value is larger and theremore more accurate
+
+## Second Part of Practice Question:
+Create a plot to highlight the quadratic effect of age. For the plot, use age between 30-60, using a female graduate analyst with 3 certificates
+
+```{r}
+# predict the values 
+predict_2 <- map_df(.x = 30:60,
+                    .f = ~predict(model_2, data.frame(Age = .x, 
+                                                      Female = 1, 
+                                                      d1 = 0,
+                                                      d2 = 0,
+                                                      d3 = 1,
+                                                      d5 = 1,
+                                                      Certificates = 3
+                                                      )
+                                  )
+                    )
+
+predict_2 %>%
+  # add an age column to the data
+  mutate(age = 30:60) %>%
+  #rename the column from the predicted varaible
+  rename(pred_NPS = `1`) %>%
+  # make the visualization
+  ggplot(aes(x = age, y = pred_NPS)) +
+  geom_jitter() +
+  geom_smooth(color = "blue",aes( fill = "Quadratic Model")) +  # Labeling the blue line as quadratic
+  geom_smooth(method = "lm", color = "red", aes(fill = "Linear Model")) +  # Labeling the red line as linear
+  labs(title = "Predicted Quad/Linear graph", x = "Age", y = "Predicted Wage", color = "Model Key") 
+
+```
+ 
