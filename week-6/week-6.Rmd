@@ -8,12 +8,14 @@ format:
      code-tools: true
      toc: true
      code-fold: show
+     output-ext: github_document 
 editor: source
 execute: 
   error: true
   echo: true
   message: false
   warning: false
+  
 ---
 
 # Setup
