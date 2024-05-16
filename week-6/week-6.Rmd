@@ -172,8 +172,8 @@ predict_2 %>%
   # make the visualization
   ggplot(aes(x = age, y = pred_NPS)) +
   geom_jitter() +
-  geom_smooth(color = "blue",aes( fill = "Quadratic Model")) +  # Labeling the blue line as quadratic
-  geom_smooth(method = "lm", color = "red", aes(fill = "Linear Model")) +  # Labeling the red line as linear
+  geom_smooth(color = "blue",aes( fill = "Quadratic Model"), se=FALSE) +  # Labeling the blue line as quadratic
+  geom_smooth(method = "lm", color = "red", aes(fill = "Linear Model"), se=FALSE) +  # Labeling the red line as linear
   labs(title = "Predicted Quad/Linear graph", x = "Age", y = "Predicted Wage", color = "Model Key") 
 
 ```
@@ -262,7 +262,7 @@ predi_log_4 <- predict(college_lm4, data.frame(Beds = 3,
 # extract the standard error of the linear model
 se_4 <- sigma(college_lm4)
 # use the standard error and you prediction in order to predict that value 
-prediction_model_4 <- exp(predi_log_4 + se_3^2/2)
+prediction_model_4 <- exp(predi_log_4 + se_4^2/2)
 
 prediction_model_4
 
