@@ -1,0 +1,125 @@
+---
+title: "ECON 339 - Tuesday/Thursday Week 7"
+date: "May 14, 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+  
+---
+
+# Setup
+```{r setup}
+library(tidyverse)
+library(readxl)
+library(car)
+options(scipen = 999)
+
+```
+# Tuesday Notes
+## Read in the Data 
+```{r}
+#read in the data for the wages 
+multi_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 7-10.xlsx"), 
+                      sheet = "Multi"
+                     )
+```
+
+ Example: A regression model was developed to analyze the relationship between employee performance scores 
+(ranging from 1 to 100) and several key factors, including whether the employee has a college degree (Yes/No), 
+their age (in years), work experience (in years), and the percentage of sales targets achieved (Targets, in %). 
+Explore the issue of multicollinearity in this application. If it is found to be severe, develop the appropriate 
+model to capture the influence of the predictor variables correctly. (Data: Multi)
+
+```{r}
+multi_data <- multi_data %>% 
+  mutate(d1 = if_else(College == "Yes", 1,0))
+
+# replicate the lm from the slides
+
+multi_lm1 <- lm(Score ~ Age + Experience + Targets + d1, data = multi_data)
+multi_lm2 <- lm(Score ~ Experience + Targets + d1, data = multi_data)
+multi_lm3 <- lm(Score ~ Age + Targets + d1, data = multi_data)
+
+# summary(multi_lm1)
+# summary(multi_lm2)
+# summary(multi_lm3)
+
+# extract the r-squared from the model
+Rsqa1 <- summary(multi_lm1)$r.squared
+Rsqa2 <- summary(multi_lm2)$r.squared
+Rsqa3 <- summary(multi_lm3)$r.squared
+
+
+# calculating the varaince inflation factor for the model
+vif(multi_lm1)
+vif(multi_lm2)
+vif(multi_lm3)
+
+# another way to calculate the correlation
+# cor(multi_data[,3:5])
+# multi_data %>%
+#   select(Age, Experience, Targets) %>%
+#   cor()
+
+```
+## Practice Problem 
+Ara Lily wishes to analyze the gender gap in salaries of project 
+managers. She has access to the salary (in $1,000s) for 200 project managers in small- to 
+middle-sized firms in the Boston area. In addition, she has data on the firm size, the 
+manager’s age and experience (in years), whether the manager is a female (Female 
+equals 1 if female, 0 otherwise). Use all observations to answer the following questions. 
+[Data: Manager]
+### Read in the data
+```{r}
+manager_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 7-10.xlsx"), 
+                      sheet = "Manager"
+                     )
+```
+
+Estimate and report a model where the dependent variable is Salary and the explanatory 
+variables include Size, Age, Experience, and Female.  Discuss the possible problem of 
+multicollinearity in the data
+```{r}
+# replicate the lm from the slides
+# if you do two models: 1 without 
+
+# If you do two models: 
+#   Model 1: with age and expirence
+#   Model 2: only expirence, not age
+# You will find the model 2 will have a higher R^2 therefore it is better to omit age when calculating 
+
+Model1 <- lm(Salary ~ Size + Age + Exper + Female, data = manager_data)
+summary(Model1)
+cor(manager_data[,2:5])
+#install.packages("car")
+
+Model2 <- lm(Salary ~ Size + Exper + Female, data = manager_data)
+summary(Model2)
+Model3 <- lm(Salary ~ Size + Age + Female, data = manager_data)
+summary(Model3)
+
+
+library(car)
+
+Rsqa1 <- summary(Model1)$r.squared
+vif(Model1)
+
+manager_data %>%
+  select(Size, Age, Exper, Female) %>%
+  cor()
+
+```
+
+Model 2 is better because it has higher R^2
