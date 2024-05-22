@@ -1,0 +1,136 @@
+---
+title: "ECON 339 - Tuesday/Thursday Week 8"
+date: "May 21, 2024"
+author: "Matina Lampsas"
+format: 
+   html:
+     embed-resources: true
+     code-tools: true
+     toc: true
+     code-fold: show
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+  
+---
+
+# Setup
+```{r setup}
+library(tidyverse)
+library(readxl)
+library(car)
+options(scipen = 999)
+
+```
+# Tuesday Notes
+## Read in the Data 
+```{r}
+#read in the data for the wages 
+satisfaction_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 7-10.xlsx"), 
+                      sheet = "Satisfaction"
+                     )
+```
+
+## Practice Problem: 
+### Estimate the true and used models: 
+```{r}
+true_model <- lm(Satisfaction ~ Salary+Hours, data = satisfaction_data)
+used_model <- lm(Satisfaction ~ Salary, data = satisfaction_data)
+
+summary(true_model)
+summary(used_model)
+
+```
+Looking at the Summaries of the True and Used models we can better understand the bias and if Endogeneity is present in the model. 
+
+True Model: 
+There is a positive correlation between salary and satisfaction, but there is a negative correlation between hours and satisfaction. This shows a negative bias
+
+
+## Practice Problem - Heteroskedasticity
+ Consider a simple regression model that relates monthly sales (Sales in $1,000s) from a 
+chain of convenience stores with the square footage (Sqft) of the store. (Data: Stores)
+ • You would expect sales to vary more as square footage increases. For instance, a 
+small convenience store is likely to include only bare essentials for which there is a 
+fairly stable demand. A larger store, on the other hand, may include specialty items, 
+resulting in more fluctuation in sales
+```{r}
+#read in the data for the wages 
+stores_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 7-10.xlsx"), 
+                      sheet = "Stores"
+                     )
+```
+### Make a residuals vs fitted plot: 
+In order to better understand if we have heteroskedasticity present, lets make a residuals vs fitted plot: 
+```{r}
+stores_lm <- lm(Sales ~ Sqft, data = stores_data)
+
+# Add residuals and the square root of the predictor variable to the data frame
+stores_data <- stores_data %>%
+  mutate(residuals = resid(stores_lm))
+
+stores_data %>% 
+  ggplot(aes(x = Sqft, y = residuals)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +  # Optional: add a smooth line
+  labs(title = "Residuals vs. Square Footage",
+       x = "Squarefootage",
+       y = "Residuals") +
+  theme_bw()+
+  theme(axis.text.x = element_text(face = "bold"))
+```
+```{r}
+# load in the libraries: 
+library(zoo)
+library(sandwich)
+```
+### To calculate robust standard error: 
+```{r}
+coeftest(stores_lm, vcov. = vcovHC(stores_lm, type = "HC1"))
+```
+
+## Practice Problem 3: 
+```{r}
+# load in the data 
+#read in the data for the college 
+college_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 2-7.xlsx"), 
+                      sheet = "College", 
+                     range = "A1:G117",
+                      n_max = 118
+                      )
+```
+
+### Make your linear regression model: 
+```{r}
+college_lm <- lm(Earnings ~ Cost + Grad + Debt + City, data = college_data)
+summary(college_lm)
+```
+### Make your graphs: 
+```{r}
+
+# Add residuals and the square root of the predictor variable to the data frame
+college_data <- college_data %>%
+  mutate(residuals = resid(college_lm))
+
+long_data <- college_data %>%
+  pivot_longer(cols = c(Cost, Grad, Debt ,City), names_to = "variable", values_to = "value")
+
+
+long_data %>% 
+  ggplot(aes(x = value, y = residuals)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +  # Optional: add a smooth line
+  labs(title = "Residuals vs. Square Footage",
+       x = "Squarefootage",
+       y = "Residuals") +
+  theme_bw()+
+  facet_wrap(~ variable, scales = "free_x") + # Create a separate panel for each predictor variable
+  theme(axis.text.x = element_text(face = "bold"))
+```
+
