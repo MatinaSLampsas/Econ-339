@@ -3,21 +3,24 @@ title: "ECON 339 - Tuesday/Thursday Week 8"
 date: "May 21, 2024"
 author: "Matina Lampsas"
 format: 
-   html:
-     embed-resources: true
-     code-tools: true
-     toc: true
-     code-fold: show
-editor: source
+  html:
+    embed-resources: true
+    code-tools: true
+    toc: true
+    code-fold: show
+editor: 
+  visual: true
+markdown: 
+  wrap: 72
 execute: 
   error: true
   echo: true
   message: false
   warning: false
-  
 ---
 
 # Setup
+
 ```{r setup}
 library(tidyverse)
 library(readxl)
@@ -25,8 +28,11 @@ library(car)
 options(scipen = 999)
 
 ```
+
 # Tuesday Notes
-## Read in the Data 
+
+## Read in the Data
+
 ```{r}
 #read in the data for the wages 
 satisfaction_data <- read_xlsx(here::here("data",
@@ -35,8 +41,10 @@ satisfaction_data <- read_xlsx(here::here("data",
                      )
 ```
 
-## Practice Problem: 
-### Estimate the true and used models: 
+## Practice Problem:
+
+### Estimate the true and used models:
+
 ```{r}
 true_model <- lm(Satisfaction ~ Salary+Hours, data = satisfaction_data)
 used_model <- lm(Satisfaction ~ Salary, data = satisfaction_data)
@@ -45,19 +53,15 @@ summary(true_model)
 summary(used_model)
 
 ```
-Looking at the Summaries of the True and Used models we can better understand the bias and if Endogeneity is present in the model. 
 
-True Model: 
-There is a positive correlation between salary and satisfaction, but there is a negative correlation between hours and satisfaction. This shows a negative bias
+Looking at the Summaries of the True and Used models we can better understand the bias and if Endogeneity is present in the model.
 
+True Model: There is a positive correlation between salary and satisfaction, but there is a negative correlation between hours and satisfaction. This shows a negative bias
 
 ## Practice Problem - Heteroskedasticity
- Consider a simple regression model that relates monthly sales (Sales in $1,000s) from a 
-chain of convenience stores with the square footage (Sqft) of the store. (Data: Stores)
- • You would expect sales to vary more as square footage increases. For instance, a 
-small convenience store is likely to include only bare essentials for which there is a 
-fairly stable demand. A larger store, on the other hand, may include specialty items, 
-resulting in more fluctuation in sales
+
+Consider a simple regression model that relates monthly sales (Sales in \$1,000s) from a chain of convenience stores with the square footage (Sqft) of the store. (Data: Stores) • You would expect sales to vary more as square footage increases. For instance, a small convenience store is likely to include only bare essentials for which there is a fairly stable demand. A larger store, on the other hand, may include specialty items, resulting in more fluctuation in sales
+
 ```{r}
 #read in the data for the wages 
 stores_data <- read_xlsx(here::here("data",
@@ -65,8 +69,11 @@ stores_data <- read_xlsx(here::here("data",
                       sheet = "Stores"
                      )
 ```
-### Make a residuals vs fitted plot: 
-In order to better understand if we have heteroskedasticity present, lets make a residuals vs fitted plot: 
+
+### Make a residuals vs fitted plot:
+
+In order to better understand if we have heteroskedasticity present, lets make a residuals vs fitted plot:
+
 ```{r}
 stores_lm <- lm(Sales ~ Sqft, data = stores_data)
 
@@ -84,17 +91,21 @@ stores_data %>%
   theme_bw()+
   theme(axis.text.x = element_text(face = "bold"))
 ```
+
 ```{r}
 # load in the libraries: 
-library(zoo)
+library(lmtest)
 library(sandwich)
 ```
-### To calculate robust standard error: 
+
+### To calculate robust standard error:
+
 ```{r}
 coeftest(stores_lm, vcov. = vcovHC(stores_lm, type = "HC1"))
 ```
 
-## Practice Problem 3: 
+## Practice Problem 3:
+
 ```{r}
 # load in the data 
 #read in the data for the college 
@@ -106,31 +117,204 @@ college_data <- read_xlsx(here::here("data",
                       )
 ```
 
-### Make your linear regression model: 
+### Make your linear regression model:
+
 ```{r}
 college_lm <- lm(Earnings ~ Cost + Grad + Debt + City, data = college_data)
 summary(college_lm)
 ```
-### Make your graphs: 
+
+### Make your graphs:
+
 ```{r}
 
-# Add residuals and the square root of the predictor variable to the data frame
+# Add residuals to the data frame
 college_data <- college_data %>%
   mutate(residuals = resid(college_lm))
 
+# Reshape the data for ggplot
 long_data <- college_data %>%
-  pivot_longer(cols = c(Cost, Grad, Debt ,City), names_to = "variable", values_to = "value")
+  pivot_longer(cols = c(Cost, Grad, Debt), names_to = "variable", values_to = "value")
 
-
+# Create the ggplot
 long_data %>% 
   ggplot(aes(x = value, y = residuals)) +
   geom_point() +
   geom_smooth(method = "loess", se = FALSE, color = "blue") +  # Optional: add a smooth line
-  labs(title = "Residuals vs. Square Footage",
-       x = "Squarefootage",
-       y = "Residuals") +
-  theme_bw()+
-  facet_wrap(~ variable, scales = "free_x") + # Create a separate panel for each predictor variable
+  labs(
+    title = "Residuals vs. Predictor Variables",
+    x = "Predictor Value",
+    y = "Residuals"
+  ) +
+  theme_bw() +
+  facet_grid(~ variable, scales = "free_x", labeller = labeller(variable = c(Cost = "Cost", Grad = "Graduation Rate", Debt = "Debt"))) +  # Proper labels for each panel
   theme(axis.text.x = element_text(face = "bold"))
+
+
+
+###### ALTERNATIVE WAY TO GRAPH THE RESIDUALS PLOT: 
+# Residuals <- resid(college_lm)
+# yHat <- predict(college_lm)
+# plot(college_data$Cost, Residuals, xlab="Cost", ylab="e")
+# plot(college_data$Grad, Residuals, xlab="Grad", ylab="e")
+# plot(college_data$Debt, Residuals, xlab="Debt", ylab="e")
+# plot(yHat, Residuals, xlab="y-hat", ylab="e")
+# abline(h=0, col = "red")
 ```
 
+# Thursday Notes:
+
+## Linear Probability Model (LPM):
+
+-   What it is: regression model applied to binary dependent variables
+
+-   Why is it called linear probability model?
+
+    -   y is a discrete value. The possible values are either 0 or 1, its conditional expected value cal be computed as E(y) = 0 x P(y=0) + 1 x P(y=1) = P(y=1)
+
+    -   Predictions with this model are made by phat = yhat = x'b where b is a vector of the
+        estimated coefficients
+
+### Example - copy and pasted from slides: 
+
+Consider the relationship between exposure to bad air in a polluted city and
+the likelihood of developing respiratory illnesses . Data include the daily average
+number of minutes spent outdoors without a mask (Minutes) and whether the
+individual has been diagnosed with a respiratory illness (Illness). Here 'Illness' is the
+response variable and 'Minutes' the predictor variable. Estimate and interpret the LPM
+to predict the respiratory illness probability for an individual who spends an average of
+eight hours outdoors without a mask. (Data: **Pollution**)
+
+-   The estimated LPM model is –\> Illness = −0.1291 + 0.0011Minutes.
+
+-   For eight hours (or 480 minutes) the predicted probability of illness equals −0.1291 +
+    0.0011 × 480 = 0.3838, or 38.38%.
+
+    ```{r}
+    # Practice Problem (Hetero)
+    #read in the data 
+    polut_data <- read_xlsx(here::here("data",
+                         "Data for Weeks 7-10.xlsx"), 
+                          sheet = "Pollution"
+                         )
+    ## professors code --- note: it is in base r
+    Linear_Model <- lm(Illness~Minutes, data = polut_data)
+    summary(Linear_Model)
+    predict(Linear_Model, data.frame(Minutes=480)) # 8 hrs
+    predict(Linear_Model, data.frame(Minutes=1200))# 20 hrs
+    predict(Linear_Model, data.frame(Minutes=60)) # 1 hr
+    ```
+
+#### Limitations of LPM: 
+
+1.  LPM doesn't constrain the predicted probabilities between 0 and 1
+2.  The linearity of the relationship may also be questionable. LPM assumes that an extra hour (60 min) outdoors without a mask increases the illness probability by 0.066, regardless of whether the increase is from 1 to 2 hours or from 20 to 21 hours.
+
+### Practice Problem: 
+
+Consider a binary response variable, y, along with four explanatory variables: x~2~ ,x~3~ ,x~4~ and x~5~ . Use the entire data for the analysis (Data = **Practice**)
+
+#### 1. Estimate a Linear Probability Model (LPM) with x~2~ ,x~3~ ,x~4~ and x~5~ as the explanatory variables. 
+
+```{r}
+#read in the data
+practice_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 7-10.xlsx"), 
+                      sheet = "Practice"
+                     )
+prac_lpm <- lm(y~x2+x3+x4+x5,data=practice_data)
+summary(prac_lpm)
+
+```
+
+#### 2. For interpretation, simulate the predicted probabilities w.r.t reasonable values of x~2~ (say between 10 and 40). Use average values for x~3~ ,x~4~ and x~5~ .
+
+```{r}
+# copied from professor code --BASE R :(
+sx2 <- 11:40
+mx3 <- mean(practice_data$x3)
+mx4 <- mean(practice_data$x4)
+mx5 <- mean(practice_data$x5)
+
+mx3; mx4; mx5
+```
+
+#### 3. Make a plot with the simulated values in part 2
+
+```{r}
+yhat <- predict(prac_lpm, data.frame(x2=sx2, x3=mx3, x4=mx4, x5=mx5))
+plot(sx2,yhat,type="l",lwd=1, col="blue", xlab="x2", ylab="phat")
+abline(h=1)
+```
+
+#### 4. At what approximate value of x~2~  does the predicted probability exceed 1.0?
+
+```{r}
+cbind(sx2,yhat)
+
+```
+
+## Logistic Regression Model: 
+
+-   With linear specification phat=x'b, we cannot avoid probabilities going outside \[0,1\]
+
+-   we need an "S-shaped" specification that constrains the probability between \[0,1\]
+
+-   In order to transform a model to account for limitations found in LPM model, we make a sigmoid specification that way the probability is only between 0 and 1.
+
+    -   no need to create a plot for LPM because OLS coefficients are easy to interpret
+
+![](){fig-env="The logistic specification is given by $\\hat{p} = \\frac{\\exp(x'b)}{1 + \\exp(x'b)} = \\frac{1}{1 + \\exp(-x'b)}$"}
+
+The logistic specification is given by $\hat{p} = \frac{\exp(x'b)}{1 + \exp(x'b)} = \frac{1}{1 + \exp(-x'b)}$
+
+-   constrains the probability between 0 and 1
+
+-   accommodates a non-linear relationship
+
+-   uses MLE
+
+### Practice Problem: 
+
+Peter Derby works as a cybersecurity analyst at a private equity firm. His colleagues at
+the firm have been inundated with a large number of spam emails. Peter has been asked
+to implement a spam detection system on the company’s email server. He analyzes a
+sample of 500 spam and legitimate emails with the following relevant variables: spam
+(1 if spam, 0 otherwise), the number of recipients, the number of hyperlinks, and the
+number of characters in the message.(Data = **Spam**)
+
+#### 1. Estimate the linear probability model and the logistic regression model for spam detection.
+
+```{r}
+#read in the data
+spam_data <- read_xlsx(here::here("data",
+                     "Data for Weeks 7-10.xlsx"), 
+                      sheet = "Spam"
+                     )
+
+spam_lm <- lm(Spam ~ Recipients + Hyperlinks + Characters, data = spam_data)
+summary(spam_lm)
+spam_logit <- glm(Spam ~ Recipients + Hyperlinks + Characters, family = binomial, data = spam_data)
+summary(spam_logit)
+
+```
+
+#### 2. Use simulations to highlight the partial effect of Recipients on the predicted spam probability, while holding Hyperlinks and Characters fixed at their sample means
+
+```{r}
+predict(spam_lm, data.frame(Recipients=15, Hyperlinks=5, Characters=100))
+predict(spam_logit, data.frame(Recipients=15, Hyperlinks=5, Characters=100), type = "response")
+mRec <- seq(0,50,by = 1) #same as 0:50
+```
+
+### 3. undefined
+
+```{r}
+mHyp <- mean(spam_data$Hyperlinks)
+mCha <- mean(spam_data$Characters)
+pLin <- predict(spam_lm, data.frame(Recipients=mRec, Hyperlinks=mHyp, Characters=mCha))
+pLog <- predict(spam_logit, data.frame(Recipients=mRec, Hyperlinks=mHyp, Characters=mCha), type = "response")
+plot(mRec,pLin,type="l",lwd=1, ylim=c(0,1.2), col="blue", xlab="Recipients", ylab="LPM")
+lines(mRec,pLog,type="l",lwd=1, col="green")
+legend(10,1.0,c("LPM","Logistic"), lwd=c(1,1), col=c("blue","green"))
+```
